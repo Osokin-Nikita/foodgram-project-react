@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from django.template.loader import render_to_string
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from weasyprint import HTML
 
 from foodgram.paginator import LimitPageNumberPaginator
 from .filters import IngredientFilter, RecipeFilter
@@ -17,6 +19,7 @@ from .serializers import (
     TagSerializer
 )
 
+from .utils.shopping_list import get_list_ingredients
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
@@ -55,7 +58,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
             related_manager.get(recipe_id=recipe.id).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         if related_manager.filter(recipe=recipe).exists():
-            raise ValidationError('Рецепт уже в избранном')
+            return Response({
+                'errors': 'Рецепт уже добавлен в избранное'
+            }, status=status.HTTP_400_BAD_REQUEST)
         related_manager.create(recipe=recipe)
         serializer = RecipeSerializer(instance=recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -75,3 +80,15 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return self._favorite_shopping_post_delete(
             request.user.shopping_user
         )
+
+    @action(detail=False)
+    def download_shopping_cart(self, request):
+        ingredients = get_list_ingredients(request.user)
+        html_template = render_to_string('recipes/pdf_template.html',
+                                         {'ingredients': ingredients})
+        html = HTML(string=html_template)
+        result = html.write_pdf()
+        response = HttpResponse(result, content_type='application/pdf;')
+        response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
+        response['Content-Transfer-Encoding'] = 'binary'
+        return response

@@ -1,5 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError
+from django.core.exceptions import ViewDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser import utils
@@ -23,12 +22,11 @@ def follow_author(request, pk):
         if user.id == author.id:
             content = {'errors': 'Нельзя подписаться на себя'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            Follow.objects.create(user=user, author=author)
-        except IntegrityError:
-            content = {'errors': 'Вы уже подписаны на данного автора'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        follows = User.objects.all().filter(username=author)
+        if Follow.objects.filter(user=user, author=author).exists():
+            return Response(
+                {'errors': 'Вы уже подписаны на данного пользователя'},
+                status=status.HTTP_400_BAD_REQUEST)
+        follows = User.objects.filter(username=author)
         serializer = FollowSerializer(
             follows,
             context={'request': request},
@@ -39,7 +37,7 @@ def follow_author(request, pk):
     if request.method == 'DELETE':
         try:
             subscription = Follow.objects.get(user=user, author=author)
-        except ObjectDoesNotExist:
+        except ViewDoesNotExist:
             content = {'errors': 'Вы не подписаны на данного автора'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         subscription.delete()

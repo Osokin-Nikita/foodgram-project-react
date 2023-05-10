@@ -66,7 +66,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 class ShowRecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
-    ingredients = serializers.SerializerMethodField()
+    ingredients = ShowIngredientsInRecipeSerializer(
+        source='ingredientsamount_set',
+        many=True,
+        read_only=True,
+    )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
@@ -76,11 +80,6 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'tags', 'author', 'ingredients',
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
-
-    @staticmethod
-    def get_ingredients(obj):
-        ingredients = RecipeIngredient.objects.filter(recipe=obj)
-        return ShowIngredientsInRecipeSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
@@ -141,7 +140,6 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             )
         return ingredients
 
-    @staticmethod
     def validate_cooking_time(value):
         if value <= 0:
             raise ValidationError(
@@ -149,7 +147,6 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             )
         return value
 
-    @staticmethod
     def add_ingredients(ingredients, recipe):
         for ingredient in ingredients:
             ingredient_id = ingredient['id']

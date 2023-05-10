@@ -39,7 +39,7 @@ class User(AbstractUser):
     first_name = models.CharField(
         verbose_name='Имя',
         max_length=150,
-        blank=True,
+        blank=False,
         help_text='Укажите свое имя'
     )
     last_name = models.CharField(
