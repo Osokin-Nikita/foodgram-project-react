@@ -135,14 +135,14 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             )
         return ingredients
 
-    def validate_cooking_time(value):
+    def validate_cooking_time(self, value):
         if value <= 0:
             raise ValidationError(
                 'Время приготовления должно быть больше нуля!'
             )
         return value
 
-    def add_ingredients(ingredients, recipe):
+    def add_ingredients(self, ingredients, recipe):
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
             amount = ingredient['amount']
