@@ -1,13 +1,13 @@
-from django.core.exceptions import ViewDoesNotExist
+from django.core.exceptions import EmptyResultSet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser import utils
 from djoser.views import TokenDestroyView
+from foodgram.paginator import LimitPageNumberPaginator
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-from foodgram.paginator import LimitPageNumberPaginator
 from .models import Follow, User
 from .serializers import FollowSerializer
 
@@ -37,7 +37,7 @@ def follow_author(request, pk):
     if request.method == 'DELETE':
         try:
             subscription = Follow.objects.get(user=user, author=author)
-        except ViewDoesNotExist:
+        except EmptyResultSet:
             content = {'errors': 'Вы не подписаны на данного автора'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         subscription.delete()

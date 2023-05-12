@@ -1,8 +1,8 @@
-from django.conf import settings
 from django.contrib import admin
 
-from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
-                     ShoppingList, Tag)
+from .models import (
+    FavoriteRecipe, Ingredient, Recipe, RecipeIngredient, ShoppingList, Tag,
+)
 
 admin.site.register(Ingredient)
 admin.site.register(Tag)

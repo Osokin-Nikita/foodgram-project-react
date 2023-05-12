@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
 from django.db.models import F, Q
 
 from .validators import validate_usernames
@@ -20,7 +19,7 @@ class User(AbstractUser):
         unique=True,
         blank=False,
         error_messages={
-        'unique': 'Пользователь с таким e-mail уже существует!',
+            'unique': 'Пользователь с таким e-mail уже существует!',
         },
         help_text='Укажите свой e-mail'
     )
@@ -31,7 +30,7 @@ class User(AbstractUser):
         null=True,
         unique=True,
         error_messages={
-        'unique': 'Пользователь с таким псевдонимом уже существует'
+            'unique': 'Пользователь с таким псевдонимом уже существует'
         },
         help_text='Укажите свой псевдоним'
 
@@ -79,6 +78,7 @@ class User(AbstractUser):
                 name="username_is_not_me"
             )
         ]
+
     def __str__(self):
         return self.get_full_name()
 
@@ -105,7 +105,7 @@ class Follow(models.Model):
                 fields=('user', 'author'),
                 name='uniq_follow',
             ),
-        models.CheckConstraint(
+            models.CheckConstraint(
                 check=~Q(user=F('author')),
                 name='self_following',
             ),

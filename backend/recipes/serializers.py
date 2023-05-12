@@ -1,17 +1,12 @@
+from django.db.models import F
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from django.db.models import F
-
-from users.serializers import CustomUserSerializer
 from users.models import User
+from users.serializers import CustomUserSerializer
+
 from .models import (
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingList,
-    Tag
+    FavoriteRecipe, Ingredient, Recipe, RecipeIngredient, ShoppingList, Tag,
 )
 
 

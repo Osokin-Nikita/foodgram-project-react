@@ -1,7 +1,6 @@
 from django.contrib import admin
-from django.conf import settings
 
-from .models import User, Follow
+from .models import Follow, User
 
 admin.site.register(User)
 admin.site.register(Follow)

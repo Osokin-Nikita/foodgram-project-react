@@ -1,25 +1,21 @@
 from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from django.template.loader import render_to_string
+from django_filters.rest_framework import DjangoFilterBackend
+from foodgram.paginator import LimitPageNumberPaginator
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from weasyprint import HTML
 
-from foodgram.paginator import LimitPageNumberPaginator
 from .filters import IngredientFilter, RecipeFilter
-from .models import (Ingredient, Recipe, Tag)
-from .permissions import IsAdminOrReadOnly, IsAdminOrAuthorOrReadOnly
+from .models import Ingredient, Recipe, Tag
+from .permissions import IsAdminOrAuthorOrReadOnly, IsAdminOrReadOnly
 from .serializers import (
-    AddRecipeSerializer,
-    IngredientSerializer,
-    RecipeSerializer,
-    ShowRecipeSerializer,
-    TagSerializer
+    AddRecipeSerializer, IngredientSerializer, RecipeSerializer,
+    ShowRecipeSerializer, TagSerializer,
 )
-
 from .utils.shopping_list import get_list_ingredients
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()

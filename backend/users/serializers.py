@@ -1,15 +1,15 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from recipes.models import Recipe
 from rest_framework import serializers
 
 from .models import Follow, User
-from recipes.models import Recipe
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
-            'email','username','first_name','last_name','password',
+            'email', 'username', 'first_name', 'last_name', 'password',
         )
         extra_kwargs = {
             'email': {'required': True},
