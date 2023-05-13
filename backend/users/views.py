@@ -1,4 +1,4 @@
-from django.core.exceptions import EmptyResultSet
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser import utils
@@ -37,7 +37,7 @@ def follow_author(request, pk):
     if request.method == 'DELETE':
         try:
             subscription = Follow.objects.get(user=user, author=author)
-        except EmptyResultSet:
+        except ObjectDoesNotExist:
             content = {'errors': 'Вы не подписаны на данного автора'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         subscription.delete()
