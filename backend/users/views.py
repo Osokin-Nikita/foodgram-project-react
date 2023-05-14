@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser import utils
@@ -38,7 +37,7 @@ def follow_author(request, pk):
         if Follow.objects.get(user=user, author=author).exists():
             content = {'errors': 'Вы не подписаны на данного автора'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        subscription=Follow.objects.get(user=user, author=author)
+        subscription = Follow.objects.get(user=user, author=author)
         subscription.delete()
         return HttpResponse('Вы успешно отписаны от этого автора',
                             status=status.HTTP_204_NO_CONTENT)
