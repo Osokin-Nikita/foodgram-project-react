@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser import utils
 from djoser.views import TokenDestroyView
@@ -36,7 +35,7 @@ def follow_author(request, pk):
 
     if request.method == 'DELETE':
         get_object_or_404(Follow, user=request.user,
-                              author=author).delete()
+                          author=author).delete()
         return Response({'detail': 'Успешная отписка'},
                         status=status.HTTP_204_NO_CONTENT)
 
