@@ -31,6 +31,7 @@ def follow_author(request, pk):
             context={'request': request},
             many=True,
         )
+        Follow.objects.create(user=request.user, author=author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     if request.method == 'DELETE':
