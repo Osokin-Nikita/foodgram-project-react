@@ -35,13 +35,10 @@ def follow_author(request, pk):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     if request.method == 'DELETE':
-        if Follow.objects.get(user=user, author=author).exists():
-            content = {'errors': 'Вы не подписаны на данного автора'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        subscription = Follow.objects.get(user=user, author=author)
-        subscription.delete()
-        return HttpResponse('Вы успешно отписаны от этого автора',
-                            status=status.HTTP_204_NO_CONTENT)
+        get_object_or_404(Follow, user=request.user,
+                              author=author).delete()
+        return Response({'detail': 'Успешная отписка'},
+                        status=status.HTTP_204_NO_CONTENT)
 
 
 class SubscriptionListView(viewsets.ReadOnlyModelViewSet):
