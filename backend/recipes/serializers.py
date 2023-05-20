@@ -76,6 +76,11 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
 
+    @staticmethod
+    def get_ingredients(obj):
+        ingredients = RecipeIngredient.objects.filter(recipe=obj)
+        return ShowIngredientsInRecipeSerializer(ingredients, many=True).data
+
     def get_is_favorited(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
